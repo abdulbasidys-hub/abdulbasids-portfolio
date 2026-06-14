@@ -45,9 +45,6 @@ export default function Contact() {
 
       {/* Header */}
       <div style={{
-        display:        'flex',
-        alignItems:     'center',
-        justifyContent: 'space-between',
         borderBottom:   '1px solid var(--surface-variant)',
         paddingBottom:  16,
         animation:      'fadeUp 0.7s ease both',
@@ -62,14 +59,6 @@ export default function Contact() {
         }}>
           Initiate Protocol
         </h2>
-        <span style={{
-          fontFamily:    'var(--f-mono)',
-          fontSize:      12,
-          letterSpacing: '0.05em',
-          color:         'var(--on-surface-variant)',
-        }}>
-          04 // CONNECT
-        </span>
       </div>
 
       {/* Form — centered */}

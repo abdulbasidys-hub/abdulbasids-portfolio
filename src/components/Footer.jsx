@@ -1,5 +1,3 @@
-import { NavLink } from 'react-router-dom'
-
 const socials = [
   {
     label: 'LinkedIn',
@@ -24,9 +22,11 @@ const socials = [
 export default function Footer() {
   return (
     <footer style={{
-      background: 'var(--surface)',
-      borderTop:  '1px solid var(--surface-variant)',
-      width:      '100%',
+      background:           'rgba(19,19,19,0.55)',
+      backdropFilter:       'blur(16px) saturate(1.4)',
+      WebkitBackdropFilter: 'blur(16px) saturate(1.4)',
+      borderTop:            '1px solid rgba(255,255,255,0.06)',
+      width:                '100%',
     }}>
       <div style={{
         display:        'flex',
@@ -40,17 +40,6 @@ export default function Footer() {
         flexWrap:       'wrap',
         rowGap:         16,
       }}>
-        <NavLink to="/" style={{
-          fontFamily:    'var(--f-sans)',
-          fontSize:      24,
-          fontWeight:    500,
-          lineHeight:    1.2,
-          letterSpacing: '-0.01em',
-          color:         'var(--primary-container)',
-        }}>
-          YUSUF.AI
-        </NavLink>
-
         <span style={{
           fontFamily:    'var(--f-mono)',
           fontSize:      12,
@@ -58,7 +47,7 @@ export default function Footer() {
           textTransform: 'uppercase',
           color:         'var(--on-surface-variant)',
         }}>
-          © 2026 Yusuf Abdulbasid. Precision Clinical AI.
+          © 2026 Precision Clinical AI.
         </span>
 
         <div style={{ display: 'flex', gap: 20, alignItems: 'center' }}>

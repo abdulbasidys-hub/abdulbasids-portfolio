@@ -60,16 +60,12 @@ export default function Work() {
 
       {/* Header */}
       <div style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         borderBottom: '1px solid var(--surface-variant)', paddingBottom: 16,
         animation: 'fadeUp 0.7s ease both',
       }}>
         <h2 style={{ fontFamily: 'var(--f-sans)', fontSize: 24, fontWeight: 500, lineHeight: 1.2, letterSpacing: '-0.01em', color: 'var(--on-surface)' }}>
           Systems Deployed
         </h2>
-        <span style={{ fontFamily: 'var(--f-mono)', fontSize: 12, letterSpacing: '0.05em', color: 'var(--on-surface-variant)' }}>
-          02 // DEPLOYMENTS
-        </span>
       </div>
 
       <p style={{ fontFamily: 'var(--f-mono)', fontSize: 13, color: 'var(--on-surface-variant)', borderLeft: '2px solid var(--primary-container)', paddingLeft: 16, animation: 'fadeUp 0.7s ease 0.1s both' }}>

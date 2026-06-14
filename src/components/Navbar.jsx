@@ -2,14 +2,16 @@ import { useState, useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
 
 const links = [
-  { label: 'About',   to: '/about'   },
+  { label: 'Home',    to: '/'        },
   { label: 'Work',    to: '/work'    },
   { label: 'Writing', to: '/writing' },
+  { label: 'About',   to: '/about'   },
   { label: 'Contact', to: '/contact' },
 ]
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 10)
@@ -19,17 +21,15 @@ export default function Navbar() {
 
   return (
     <header style={{
-      background:     scrolled
-        ? 'rgba(19,19,19,0.75)'
-        : 'rgba(19,19,19,0.6)',
-      backdropFilter: 'blur(16px) saturate(1.4)',
+      background:           scrolled ? 'rgba(19,19,19,0.75)' : 'rgba(19,19,19,0.55)',
+      backdropFilter:       'blur(16px) saturate(1.4)',
       WebkitBackdropFilter: 'blur(16px) saturate(1.4)',
-      borderBottom:   '1px solid rgba(255,255,255,0.06)',
-      position:       'sticky',
-      top:            0,
-      zIndex:         50,
-      width:          '100%',
-      transition:     'background 0.3s ease',
+      borderBottom:         '1px solid rgba(255,255,255,0.06)',
+      position:             'sticky',
+      top:                  0,
+      zIndex:               50,
+      width:                '100%',
+      transition:           'background 0.3s ease',
     }}>
       <div style={{
         display:        'flex',
@@ -44,19 +44,26 @@ export default function Navbar() {
         {/* Logo */}
         <NavLink to="/" style={{
           fontFamily:    'var(--f-sans)',
-          fontSize:      48,
+          fontSize:      22,
           fontWeight:    700,
           lineHeight:    1.1,
-          letterSpacing: '-0.02em',
+          letterSpacing: '-0.01em',
           color:         'var(--primary-container)',
+          whiteSpace:    'nowrap',
         }}>
-          YUSUF.AI
+          Mls. Abdulbasid Yusuf
         </NavLink>
 
-        {/* Nav links */}
-        <nav style={{ display: 'flex', gap: 32 }}>
+        {/* Desktop nav — centered, leaning right */}
+        <nav className="navbar-links" style={{
+          display:    'flex',
+          gap:        32,
+          flex:       1,
+          justifyContent: 'flex-end',
+          paddingRight: 40,
+        }}>
           {links.map(({ label, to }) => (
-            <NavLink key={to} to={to} style={({ isActive }) => ({
+            <NavLink key={to} to={to} end style={({ isActive }) => ({
               fontFamily:    'var(--f-sans)',
               fontSize:      16,
               lineHeight:    1.6,
@@ -67,7 +74,7 @@ export default function Navbar() {
               transition:    'color 0.2s, border-color 0.2s',
               opacity:       isActive ? 0.9 : 1,
             })}
-              onMouseEnter={e => { if (!e.currentTarget.classList.contains('active')) e.currentTarget.style.color = 'var(--primary-container)' }}
+              onMouseEnter={e => { e.currentTarget.style.color = 'var(--primary-container)' }}
               onMouseLeave={e => { if (!e.currentTarget.classList.contains('active')) e.currentTarget.style.color = 'var(--on-surface-variant)' }}
             >
               {label}
@@ -75,26 +82,65 @@ export default function Navbar() {
           ))}
         </nav>
 
-        {/* Connect button */}
-        <NavLink to="/contact" style={{
-          display:        'inline-flex',
-          alignItems:     'center',
-          justifyContent: 'center',
-          padding:        '8px 24px',
-          border:         '1px solid var(--primary-container)',
-          color:          'var(--primary-container)',
-          fontFamily:     'var(--f-mono)',
-          fontSize:       12,
-          letterSpacing:  '0.05em',
-          textTransform:  'uppercase',
-          transition:     'background 0.2s, color 0.2s',
-        }}
-          onMouseEnter={e => { e.currentTarget.style.background = 'var(--primary-container)'; e.currentTarget.style.color = 'var(--on-primary-container)' }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'transparent';              e.currentTarget.style.color = 'var(--primary-container)' }}
+        {/* Mobile hamburger */}
+        <button
+          className="navbar-hamburger"
+          onClick={() => setMenuOpen(o => !o)}
+          aria-label="Toggle menu"
+          style={{
+            display:    'none',
+            background: 'transparent',
+            border:     'none',
+            color:      'var(--primary-container)',
+            padding:    8,
+          }}
         >
-          Connect
-        </NavLink>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <line x1="3" y1="6"  x2="21" y2="6"  />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+        </button>
       </div>
+
+      {/* Mobile dropdown menu */}
+      {menuOpen && (
+        <nav style={{
+          display:        'flex',
+          flexDirection:  'column',
+          gap:            0,
+          borderTop:      '1px solid rgba(255,255,255,0.06)',
+          background:     'rgba(19,19,19,0.85)',
+          backdropFilter: 'blur(16px) saturate(1.4)',
+        }}>
+          {links.map(({ label, to }) => (
+            <NavLink
+              key={to}
+              to={to}
+              end
+              onClick={() => setMenuOpen(false)}
+              style={({ isActive }) => ({
+                fontFamily:    'var(--f-sans)',
+                fontSize:      16,
+                padding:       '16px 40px',
+                color:         isActive ? 'var(--primary-container)' : 'var(--on-surface-variant)',
+                fontWeight:    isActive ? 700 : 400,
+                borderBottom:  '1px solid rgba(255,255,255,0.05)',
+              })}
+            >
+              {label}
+            </NavLink>
+          ))}
+        </nav>
+      )}
+
+      {/* Responsive rules */}
+      <style>{`
+        @media (max-width: 768px) {
+          .navbar-links { display: none !important; }
+          .navbar-hamburger { display: flex !important; align-items: center; justify-content: center; }
+        }
+      `}</style>
     </header>
   )
 }

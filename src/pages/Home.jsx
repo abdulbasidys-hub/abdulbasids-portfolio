@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 const WORDS = [
@@ -8,11 +8,43 @@ const WORDS = [
   'Diagnostic Systems.',
 ]
 
+const offerings = [
+  {
+    icon: 'lab_research',
+    title: 'Healthcare AI Solutions',
+    desc:  'Building intelligent tools for clinical laboratory environments — automated workflows, QC anomaly detection, AI integration grounded in real diagnostic science.',
+    tags:  ['PyTorch', 'TensorFlow', 'Python'],
+  },
+  {
+    icon: 'sync_alt',
+    title: 'Automation & Integration',
+    desc:  'Connecting disconnected healthcare systems with n8n, Make, and API integrations. LIS integration, reporting pipelines, zero manual bottlenecks.',
+    tags:  ['n8n', 'Make', 'API', 'LIS'],
+  },
+  {
+    icon: 'monitoring',
+    title: 'Data Analytics & Intelligence',
+    desc:  'Turning raw laboratory data into dashboards, QC trend analysis, and decision-support systems that turn numbers into clinical insight.',
+    tags:  ['Dashboards', 'QC Trends', 'Analytics'],
+  },
+]
+
 export default function Home() {
   const navigate = useNavigate()
+  const ref = useRef()
   const [word,     setWord]     = useState(0)
   const [typed,    setTyped]    = useState('')
   const [deleting, setDeleting] = useState(false)
+  const [scrollY,  setScrollY]  = useState(0)
+
+  // Reveal-on-scroll for .reveal elements
+  useEffect(() => {
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('show') })
+    }, { threshold: 0.1 })
+    ref.current?.querySelectorAll('.reveal').forEach(el => obs.observe(el))
+    return () => obs.disconnect()
+  }, [])
 
   useEffect(() => {
     const target = WORDS[word]
@@ -30,11 +62,23 @@ export default function Home() {
     return () => clearTimeout(t)
   }, [typed, deleting, word])
 
+  // Track scroll to fade out the background image
+  useEffect(() => {
+    const onScroll = () => setScrollY(window.scrollY)
+    window.addEventListener('scroll', onScroll)
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  // Fade image out over the first ~500px of scroll
+  const imgOpacity = Math.max(0, 0.35 - scrollY / 500 * 0.35)
+
   return (
-    <main style={{
+    <main ref={ref} style={{
       maxWidth: 1280,
       margin:   '0 auto',
       padding:  '48px 40px 96px',
+      position: 'relative',
+      zIndex:   1,
     }}>
 
       {/* ── Hero ── */}
@@ -46,24 +90,6 @@ export default function Home() {
         gap:            32,
         animation:      'fadeUp 0.8s ease both',
       }}>
-        {/* Status indicator */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{
-            width: 8, height: 8,
-            background: 'var(--primary-container)',
-            animation:  'pulse-green 2s ease-in-out infinite',
-          }} />
-          <span style={{
-            fontFamily:    'var(--f-mono)',
-            fontSize:      12,
-            letterSpacing: '0.05em',
-            textTransform: 'uppercase',
-            color:         'var(--primary-container)',
-          }}>
-            System Online
-          </span>
-        </div>
-
         {/* Headline */}
         <h1 style={{
           fontFamily:    'var(--f-sans)',
@@ -155,7 +181,7 @@ export default function Home() {
         paddingLeft: 48,
         paddingTop:  16,
         paddingBottom: 16,
-        marginBottom: 128,
+        marginBottom: 96,
         animation: 'fadeUp 0.8s ease 0.15s both',
       }}>
         <p style={{
@@ -181,7 +207,81 @@ export default function Home() {
         </span>
       </section>
 
-      {/* ── Photo ── */}
+      {/* ── Services ── */}
+      <section style={{ display: 'flex', flexDirection: 'column', gap: 48, marginTop: 96 }}>
+        <div style={{
+          borderBottom:   '1px solid var(--surface-variant)',
+          paddingBottom:  16,
+        }}>
+          <h2 style={{
+            fontFamily:    'var(--f-sans)',
+            fontSize:      24,
+            fontWeight:    500,
+            lineHeight:    1.2,
+            letterSpacing: '-0.01em',
+            color:         'var(--on-surface)',
+          }}>Services</h2>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 24 }}>
+          {offerings.map((o, i) => (
+            <div key={o.title} className="reveal" style={{
+              background:  'var(--surface-low)',
+              border:      '1px solid var(--surface-variant)',
+              padding:     32,
+              transition:  'border-color 0.3s, transform 0.3s',
+              transitionDelay: `${i * 0.12}s`,
+            }}
+              onMouseEnter={e => {
+                e.currentTarget.style.borderColor = 'var(--primary-container)'
+                e.currentTarget.style.transform = 'translateY(-6px)'
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.borderColor = 'var(--surface-variant)'
+                e.currentTarget.style.transform = 'translateY(0)'
+              }}
+            >
+              <span className="material-symbols-outlined" style={{
+                color:        'var(--primary-container)',
+                fontSize:     32,
+                display:      'block',
+                marginBottom: 24,
+                fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24",
+              }}>
+                {o.icon}
+              </span>
+              <h3 style={{
+                fontFamily:   'var(--f-sans)',
+                fontSize:     16,
+                fontWeight:   600,
+                lineHeight:   1.6,
+                color:        'var(--on-surface)',
+                marginBottom: 12,
+              }}>{o.title}</h3>
+              <p style={{
+                fontFamily:   'var(--f-sans)',
+                fontSize:     14,
+                lineHeight:   1.5,
+                color:        'var(--on-surface-variant)',
+                marginBottom: 24,
+              }}>{o.desc}</p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                {o.tags.map(t => (
+                  <span key={t} style={{
+                    background:    'var(--surface)',
+                    padding:       '4px 8px',
+                    fontFamily:    'var(--f-mono)',
+                    fontSize:      12,
+                    letterSpacing: '0.05em',
+                    color:         'var(--on-surface-variant)',
+                    border:        '1px solid var(--surface-variant)',
+                  }}>{t}</span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
       <div style={{
         position:   'fixed',
         right:      0,
@@ -190,19 +290,17 @@ export default function Home() {
         width:      '40%',
         zIndex:     0,
         pointerEvents: 'none',
+        WebkitMaskImage: 'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.5) 35%, black 100%)',
+        maskImage:       'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.5) 35%, black 100%)',
       }}>
-        <img src="/background.png" alt="" style={{
+        <img src="/background.PNG" alt="" style={{
           width:      '100%',
           height:     '100%',
           objectFit:  'cover',
           objectPosition: 'top center',
-          opacity:    0.12,
+          opacity:    imgOpacity,
           filter:     'grayscale(20%)',
-        }} />
-        <div style={{
-          position:   'absolute',
-          inset:      0,
-          background: 'linear-gradient(to right, var(--surface-lowest) 0%, rgba(14,14,14,0.5) 50%, transparent 100%)',
+          transition: 'opacity 0.1s linear',
         }} />
       </div>
     </main>
